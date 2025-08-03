@@ -3,10 +3,19 @@
 DIALOGS = {
     # 储存相关对话
     "empty_storage": {
-        "text": "身上没有可以储存的粮食"
+        "text": "身上没有可以储存的苹果"
     },
     "storage_success": {
         "text": "储存完成！"
+    },
+    "bomb_exploded": {
+        "text": "炸弹爆炸了！"
+    },
+    "time_added": {
+        "text": "时间增加了！"
+    },
+    "super_food_collected": {
+        "text": "金苹果！负重加满！"
     },
     # 可以添加更多对话...
 }

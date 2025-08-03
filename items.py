@@ -4,7 +4,9 @@ from game_config import (
     ITEM_FALL_SPEED_RANGE, 
     ITEM_SPAWN_INTERVAL_RANGE, 
     ITEM_SPAWN_X_RANGE,  
-    ITEM_SPAWN_PROBABILITIES  # 添加到文件开头的导入中
+    ITEM_SPAWN_PROBABILITIES,
+    BOMB_STUN_DURATION,
+    CLOCK_ADD_TIME
 )
 
 # 道具类型常量 - 便于未来扩展
@@ -78,7 +80,13 @@ class Item:
 class FoodItem(Item):
     def __init__(self, x, y):
         super().__init__(ITEM_TYPES['FOOD'], x, y)
-        self.image = None  # 预留外观导入空间
+        # 加载粮食图像
+        try:
+            self.image = pygame.image.load("assets/items/food.png").convert_alpha()
+            # 调整图像大小以适应道具尺寸
+            self.image = pygame.transform.scale(self.image, (self.size, self.size))
+        except FileNotFoundError:
+            self.image = None  # 图像不存在时使用默认绘制
 
     def on_collect(self, player):
         super().on_collect(player)
@@ -99,11 +107,22 @@ class FoodItem(Item):
 class BombItem(Item):
     def __init__(self, x, y):
         super().__init__(ITEM_TYPES['BOMB'], x, y)
-        self.image = None  # 预留外观导入空间
+        # 加载炸弹图像
+        try:
+            self.image = pygame.image.load("assets/items/bomb.png").convert_alpha()
+            # 调整图像大小以适应道具尺寸
+            self.image = pygame.transform.scale(self.image, (self.size, self.size))
+        except FileNotFoundError:
+            self.image = None  # 图像不存在时使用默认绘制
 
     def on_collect(self, player):
         super().on_collect(player)
-        # 炸弹特有逻辑待实现
+        # 炸弹特有逻辑：清空玩家负重
+        player.game_state.current_weight = 0
+        # 使玩家眩晕
+        player.game_state.stun_player(BOMB_STUN_DURATION)
+        # 显示炸弹爆炸的对话提示
+        player.game_state.show_dialog_for_duration("bomb_exploded", 1500)
 
     def draw(self, screen):
         if self.image:
@@ -119,11 +138,19 @@ class BombItem(Item):
 class ClockItem(Item):
     def __init__(self, x, y):
         super().__init__(ITEM_TYPES['CLOCK'], x, y)
-        self.image = None  # 预留外观导入空间
+        # 加载时钟图像
+        try:
+            self.image = pygame.image.load("assets/items/clock.png").convert_alpha()
+            # 调整图像大小以适应道具尺寸
+            self.image = pygame.transform.scale(self.image, (self.size, self.size))
+        except FileNotFoundError:
+            self.image = None  # 图像不存在时使用默认绘制
 
     def on_collect(self, player):
         super().on_collect(player)
-        # 时钟特有逻辑待实现
+        # 时钟特有逻辑：增加游戏时间
+        player.game_state.add_game_time(CLOCK_ADD_TIME)
+        player.game_state.show_dialog_for_duration("time_added", 1500)
 
     def draw(self, screen):
         if self.image:
@@ -139,11 +166,18 @@ class ClockItem(Item):
 class SuperFoodItem(Item):
     def __init__(self, x, y):
         super().__init__(ITEM_TYPES['SUPER_FOOD'], x, y)
-        self.image = None  # 预留外观导入空间
+        # 加载超级粮食图像
+        try:
+            self.image = pygame.image.load("assets/items/superfood.png").convert_alpha()
+            # 调整图像大小以适应道具尺寸
+            self.image = pygame.transform.scale(self.image, (self.size, self.size))
+        except FileNotFoundError:
+            self.image = None  # 图像不存在时使用默认绘制
 
     def on_collect(self, player):
         super().on_collect(player)
-        # 超级粮食特有逻辑待实现
+        player.game_state.current_weight = player.game_state.max_weight
+        player.game_state.show_dialog_for_duration("super_food_collected", 1500)
 
     def draw(self, screen):
         if self.image:

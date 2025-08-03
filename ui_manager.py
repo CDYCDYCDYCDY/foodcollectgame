@@ -91,8 +91,16 @@ class UIManager:
             36  # 仅保留font_size参数
         )
 
-        # 添加跟随人物的储存提示或者负重显示
-        if game_state.is_storing:
+        # 添加跟随人物的眩晕/储存提示或者负重显示
+        if game_state.player.is_stunned():
+            draw_text(
+                self.screen,
+                "眩晕中",
+                game_state.player.x-20,
+                game_state.player.y + game_state.player.height+10,
+                16
+            )
+        elif game_state.is_storing:
             draw_text(
                 self.screen,
                 "储存中",

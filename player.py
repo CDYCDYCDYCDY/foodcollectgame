@@ -12,7 +12,11 @@ class Player:
         self.direction = 'right'  # 初始方向向右
         self.weight = 0  # 新增：数字负重状态，默认为0
         self.state = 'stop'  # 新增：角色状态（move/stop/stun/unload）
-        
+        self.stun_start_time = 0  # 替换：眩晕开始时间
+        self.stun_duration = 0  # 新增：眩晕持续时间
+        self.stun_paused_time = 0  # 新增：眩晕过程中的暂停时间
+        self.last_stun_pause_start = 0  # 新增：最后一次眩晕暂停开始时间
+
         # 创建玩家矩形
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         
@@ -62,7 +66,7 @@ class Player:
         elif dx < 0:
             self.change_direction('left')
 
-    # 新增：获取当前状态的方法，供main.py使用
+    # 获取当前状态的方法，供main.py使用
     def get_current_state(self):
         return {
             'direction': self.direction,
@@ -70,7 +74,7 @@ class Player:
             'size': (self.width, self.height)
         }
 
-    # 新增：加载外部形象的方法（为未来素材库功能预留）
+    # 加载外部形象的方法（为未来素材库功能预留）
     def load_sprite(self, direction, sprite_data):
         if direction in ['left', 'right']:
             self.sprites[direction] = sprite_data
@@ -78,18 +82,22 @@ class Player:
             if direction == self.direction:
                 self.change_direction(direction)
 
-     # 新增：设置负重状态的方法
+     # 设置负重状态的方法
     def set_weight(self, weight):
         self.weight = weight
         # 负重变化时重新加载形象
         self.load_image()
 
-    # 新增：设置角色状态的方法
+    # 设置角色状态的方法
     def set_state(self, state):
         if state in ['move', 'stop', 'stun', 'unload']:
             self.state = state
             # 状态变化时重新加载形象
             self.load_image()
+
+    # 检查是否处于眩晕状态的方法
+    def is_stunned(self):
+        return self.state == 'stun'
 
     # 修改：加载外部形象的方法
     def load_image(self):

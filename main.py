@@ -27,10 +27,6 @@ class Game:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.ui.handle_click(pygame.mouse.get_pos(), self.state):
                     self.running = False
-            elif event.type == pygame.KEYDOWN:
-                # P键暂停/恢复游戏
-                if event.key == pygame.K_p:
-                    self.state.is_paused = not self.state.is_paused
         
 
     def run(self):
